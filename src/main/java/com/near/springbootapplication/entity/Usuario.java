@@ -1,8 +1,7 @@
-package com.near.springbootapplication.entity.user;
+package com.near.springbootapplication.entity;
 
 
 import jakarta.persistence.*;
-import jdk.jfr.Enabled;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,18 +19,23 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name ="userdata" ,uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
-public class User implements UserDetails {
+public class Usuario implements UserDetails {
     @Id
-    @GeneratedValue
-    Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     @Column(nullable = false)
-    String username;
-    String password;
-    String role;
+    private String username;
+
+    private String password;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        return List.of(new SimpleGrantedAuthority(role.getRoleName()));
     }
 
     @Override

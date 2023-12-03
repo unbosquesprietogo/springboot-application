@@ -1,4 +1,4 @@
-package com.near.springbootapplication.util;
+package com.near.springbootapplication.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

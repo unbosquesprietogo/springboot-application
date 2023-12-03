@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 
-@Configuration
+//@Configuration
 public class LdapConfig {
 
-    @Value("${ldap.url}")
+  /*  @Value("${ldap.url}")
     private String ldapUrl;
 
     @Value("${ldap.base}")
@@ -35,4 +35,7 @@ public class LdapConfig {
     public LdapTemplate ldapTemplate() {
         return new LdapTemplate(contextSource());
     }
+
+
+   */
 }

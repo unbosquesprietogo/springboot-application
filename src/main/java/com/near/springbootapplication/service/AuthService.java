@@ -1,14 +1,12 @@
 package com.near.springbootapplication.service;
 
-import com.near.springbootapplication.entity.user.LdapUserRepository;
-import com.near.springbootapplication.model.consumer.response.AuthResponse;
-import com.near.springbootapplication.model.consumer.request.LoginRequest;
-import com.near.springbootapplication.model.consumer.request.RegisterRequest;
-import com.near.springbootapplication.entity.user.User;
-import com.near.springbootapplication.entity.user.UserRepository;
+import com.near.springbootapplication.entity.Role;
+import com.near.springbootapplication.model.response.AuthResponse;
+import com.near.springbootapplication.model.request.LoginRequest;
+import com.near.springbootapplication.model.request.RegisterRequest;
+import com.near.springbootapplication.entity.Usuario;
+import com.near.springbootapplication.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,19 +17,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final LdapUserRepository ldapUserRepository;
+    private final UsuarioRepository usuarioRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private LdapTemplate ldapTemplate;
 
     public AuthResponse loginDB(LoginRequest request) {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        UserDetails user=userRepository.findByUsername(request.getUsername()).orElseThrow();
+        UserDetails user= usuarioRepository.findByUsername(request.getUsername()).orElseThrow();
         String token=jwtService.getToken(user);
         return AuthResponse.builder()
                 .token(token)
@@ -39,28 +34,16 @@ public class AuthService {
 
     }
 
-    public AuthResponse loginLDAP (LoginRequest request){
-        try {
-            ldapTemplate.authenticate("", "(uid=" + request.getUsername() + ")", request.getPassword());
-            UserDetails user=ldapUserRepository.findByUsername(request.getUsername()).orElseThrow();
-            String token=jwtService.getToken(user);
-            return AuthResponse.builder()
-                    .token(token)
-                    .build();
 
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     public AuthResponse register(RegisterRequest request) {
-        User user = User.builder()
+        Usuario user = Usuario.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode( request.getPassword()))
-                .role(request.getRole())
+                .role(new Role(request.getIdRole()))
                 .build();
 
-        userRepository.save(user);
+        usuarioRepository.save(user);
 
         return AuthResponse.builder()
                 .token(jwtService.getToken(user))

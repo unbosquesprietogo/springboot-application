@@ -1,4 +1,4 @@
-package com.near.springbootapplication.model.consumer.response;
+package com.near.springbootapplication.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

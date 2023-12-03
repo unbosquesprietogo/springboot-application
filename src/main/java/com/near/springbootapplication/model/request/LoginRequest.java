@@ -1,4 +1,4 @@
-package com.near.springbootapplication.model.consumer.request;
+package com.near.springbootapplication.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class LoginRequest {
     String username;
     String password;
-    String role;
+
 }

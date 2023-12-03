@@ -3,14 +3,14 @@ package com.near.springbootapplication.service;
 import com.near.springbootapplication.entity.Cliente;
 import com.near.springbootapplication.entity.DetalleFactura;
 import com.near.springbootapplication.entity.Factura;
-import com.near.springbootapplication.repository.ClienteRepository;
-import com.near.springbootapplication.repository.DetalleFacturaRepository;
-import com.near.springbootapplication.repository.FacturaRepository;
-import com.near.springbootapplication.repository.ParametroGeneralRepository;
+import com.near.springbootapplication.entity.FacturaTemp;
+import com.near.springbootapplication.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,10 +25,19 @@ public class FacturaService {
     private ParametroGeneralRepository parametroGeneralRepository;
     @Autowired
     private DetalleFacturaRepository detalleFacturaRepository;
+    @Autowired
+    private FacturaTempService facturaTempService;
+    @Autowired
+    private FacturaTempRepository facturaTempRepository;
 
 
     @Transactional
     public Factura crearFacturaConDetalles(Factura factura, List<DetalleFactura> detalles) {
+
+        Calendar calendar = Calendar.getInstance();
+        Date fechaActual = calendar.getTime();
+
+        factura.setFechaFactura(fechaActual);
 
         float iva = Float.valueOf(
                 parametroGeneralRepository.findById(1)
@@ -37,6 +46,8 @@ public class FacturaService {
         factura.setIvaFactura(iva);
 
         Factura facturaGuardada = facturaRepository.save(factura);
+        facturaTempService.facturaTemp(factura);
+
 
         detalles.forEach(detalle -> detalle.setFactura(facturaGuardada));
         detalles.forEach(detalle -> detalle.setValorIVA(iva));

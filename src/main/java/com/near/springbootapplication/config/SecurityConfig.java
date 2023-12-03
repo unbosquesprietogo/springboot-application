@@ -12,8 +12,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.logging.Filter;
 
 @Configuration
 @EnableWebSecurity
@@ -26,7 +28,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*")); // Permitir todos los orígenes
-        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE")); // Permitir métodos específicos
+        configuration.setAllowedMethods(Arrays.asList("*"));// Permitir métodos específicos
         configuration.setAllowCredentials(true); // Permitir credenciales
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type")); // Permitir headers específicos
 
@@ -36,9 +38,22 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsFilter corsFilter() {
+        return new CorsFilter(request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowCredentials(true);
+            config.addAllowedOrigin("*");
+            config.addAllowedHeader("*");
+            config.addAllowedMethod("*");
+
+            return config;
+        });
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return  http
-            //    .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Configurar CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Configurar CORS
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authRequest ->
                         authRequest

@@ -12,9 +12,16 @@ public class ProductoService {
 
     private final ProductoRepository productoRepository;
 
+
+
     @Autowired
     public ProductoService(ProductoRepository productoRepository) {
         this.productoRepository = productoRepository;
+    }
+
+
+    public List<Producto> getProductos(){
+        return  productoRepository.findAll();
     }
 
     // Consultar Productos por ID de Categoría

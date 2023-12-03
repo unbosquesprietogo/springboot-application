@@ -20,6 +20,16 @@ public class ProductoController {
         this.productoService = productoService;
     }
 
+
+    @GetMapping
+    public ResponseEntity<?> getProductos() {
+        try {
+            List<Producto> productos = productoService.getProductos();
+            return ResponseEntity.ok(productos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener los productos: " + e.getMessage());
+        }
+    }
     @PostMapping("/categoria/{idCategoria}")
     public ResponseEntity<?> getProductosPorCategoria(@PathVariable int idCategoria) {
         try {
